@@ -321,22 +321,26 @@ body::after {
 .epilogue-bg {
   position: absolute; inset: 0;
   background-size: cover; background-position: center;
-  filter: brightness(.18);
+  filter: brightness(.75) saturate(0.35);
 }
-.epilogue-content { position: relative; text-align: center; }
+.epilogue-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(253,247,238,0.72);
+}
+.epilogue-content { position: relative; text-align: center; z-index: 2; }
 .verse-ref {
   display: inline-block;
-  font-size: var(--t4); color: var(--gold2); letter-spacing: .20em;
+  font-size: var(--t4); color: var(--acc); letter-spacing: .20em;
   margin-bottom: 16px;
-  border-bottom: 1px solid rgba(200,154,32,0.4);
+  border-bottom: 1.5px solid rgba(192,80,10,0.3);
   padding-bottom: 8px;
 }
 .verse-text {
   font-size: clamp(36px, 4.3vw, 58px);
   font-weight: 700; line-height: 1.8;
-  color: #FDF7EE;
+  color: var(--ink);
 }
-.verse-text .em { color: var(--gold2); }
+.verse-text .em { color: var(--acc); }
 .verse-sep {
   margin: 28px auto;
   display: flex; align-items: center; justify-content: center; gap: 10px;

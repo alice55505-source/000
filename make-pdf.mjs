@@ -22,10 +22,6 @@ html, body { width: 1366px !important; height: auto !important; overflow: visibl
   break-after: page;
   overflow: hidden !important;
 }
-.slide:last-child {
-  page-break-after: avoid !important;
-  break-after: avoid !important;
-}
 #progress, #section-tag, #hint { display: none !important; }
 </style>`;
 
@@ -46,6 +42,14 @@ await page.setViewportSize({ width: 1366, height: 768 });
 await page.goto('http://127.0.0.1:9988/', { waitUntil: 'networkidle', timeout: 30000 });
 
 await page.waitForTimeout(1500);
+
+// Remove page-break-after from last slide to prevent blank final page
+await page.evaluate(() => {
+  const slides = document.querySelectorAll('.slide');
+  const last = slides[slides.length - 1];
+  last.style.pageBreakAfter = 'avoid';
+  last.style.breakAfter = 'avoid';
+});
 
 const slideCount = await page.locator('.slide').count();
 console.log(`Found ${slideCount} slides`);
