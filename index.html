@@ -114,52 +114,61 @@ body::after {
 
 /* ── 章節頁 ── */
 .slide.chapter-slide {
-  background: linear-gradient(135deg, #0D3A28 0%, #1A6A48 35%, #C06818 65%, #7A2E08 100%);
+  background: var(--bg);
 }
-/* 章節頁裝飾覆蓋 ::before 和 ::after */
+/* 章節頁：大裝飾圓環（右上）*/
 .slide.chapter-slide::before {
-  width: 380px; height: 380px;
-  top: -120px; right: -120px;
-  border: 2px solid rgba(200,154,32,0.18);
+  width: 500px; height: 500px;
+  top: -160px; right: -160px;
+  border: 2px solid rgba(192,80,10,0.13);
   box-shadow:
-    inset 0 0 0 40px rgba(200,154,32,0.06),
-    0 0 0 60px rgba(200,154,32,0.06),
-    0 0 0 120px rgba(200,154,32,0.03);
+    inset 0 0 0 50px rgba(192,80,10,0.04),
+    0 0 0 70px rgba(192,80,10,0.04),
+    0 0 0 140px rgba(192,80,10,0.02);
 }
+/* 章節頁：左下裝飾圓環 */
 .slide.chapter-slide::after {
-  width: 280px; height: 280px;
-  bottom: -90px; left: -90px;
-  border: 2px solid rgba(200,154,32,0.14);
-  box-shadow: 0 0 0 50px rgba(200,154,32,0.05);
+  width: 340px; height: 340px;
+  bottom: -110px; left: -110px;
+  border: 2px solid rgba(154,112,16,0.13);
+  box-shadow: 0 0 0 60px rgba(154,112,16,0.04);
 }
-/* 章節頁頂部彩條 */
+/* 章節頁頂部漸層彩帶 */
 .slide.chapter-slide .slide-inner::before {
   content: '';
   position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
-  width: 100px; height: 4px;
-  background: linear-gradient(90deg, #1A9A68, var(--gold2), #E07030, var(--gold2), #1A9A68);
-  border-radius: 2px;
+  width: 120px; height: 5px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--acc), var(--gold2), var(--acc));
+}
+/* 章節頁：中央裝飾底盤 */
+.slide.chapter-slide .slide-inner::after {
+  content: '';
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 420px; height: 420px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(192,80,10,0.05) 0%, rgba(154,112,16,0.04) 50%, transparent 70%);
+  border: 1px dashed rgba(192,80,10,0.12);
+  pointer-events: none; z-index: 0;
 }
 
-.chapter { text-align: center; position: relative; }
+.chapter { text-align: center; position: relative; z-index: 1; }
 .chapter-tag {
   display: inline-block;
-  font-size: var(--t4); color: var(--gold2);
-  letter-spacing: .28em; margin-bottom: 24px;
-  border: 1px solid rgba(200,154,32,0.45);
-  padding: 7px 28px; border-radius: 40px;
-  background: rgba(200,154,32,0.08);
+  font-size: var(--t4); color: var(--acc);
+  letter-spacing: .28em; margin-bottom: 20px;
+  border: 1.5px solid rgba(192,80,10,0.3);
+  padding: 7px 32px; border-radius: 40px;
+  background: rgba(192,80,10,0.06);
 }
 .chapter-title {
   font-size: clamp(96px, 10.5vw, 155px);
   font-weight: 900; line-height: 1.15;
-  color: #FDF7EE;
-  text-shadow: 0 6px 40px rgba(0,0,0,0.4);
+  color: var(--ink);
 }
-.chapter-title span { color: var(--gold2); }
+.chapter-title span { color: var(--acc); }
 .chapter-sub {
-  font-size: var(--t3); color: rgba(253,247,238,0.6);
-  margin-top: 24px; letter-spacing: .1em;
+  font-size: var(--t3); color: var(--ink2);
+  margin-top: 20px; letter-spacing: .1em;
 }
 
 /* ── 頁眉標籤 ── */
