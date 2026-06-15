@@ -6,21 +6,28 @@
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg:   #FFFBF4;
-  --bg2:  #FFF5E8;
-  --bg3:  #F2E4D0;
-  --ink:  #2C1A0E;
-  --ink2: #7A5C40;
-  --ink3: #A08060;
-  --acc:  #D4680A;
-  --gold: #B8880A;
-  --red:  #C03030;
+  --bg:      #FDF7EE;
+  --bg2:     #F7EDD9;
+  --bg3:     #EFE0C4;
+  --surface: #FFFFFF;
+  --ink:     #1A0E04;
+  --ink2:    #5A3E26;
+  --ink3:    #967558;
+  --acc:     #C0500A;
+  --acc2:    #E07030;
+  --gold:    #9A7010;
+  --gold2:   #C89A20;
+  --red:     #B82828;
+  --shadow:  rgba(100,50,10,0.10);
+  --shadow2: rgba(100,50,10,0.18);
   --font: '源泉圓體丹B', 'Noto Sans TC', sans-serif;
-  --t1: 80px;   /* 大標 */
-  --t2: 58px;   /* 中標 */
-  --t3: 36px;   /* 內文 */
-  --t4: 24px;   /* 備註 */
+  --t1: 80px;
+  --t2: 56px;
+  --t3: 34px;
+  --t4: 22px;
+  --r:  14px;
 }
+
 html, body {
   width: 100%; height: 100%;
   background: var(--bg);
@@ -30,201 +37,205 @@ html, body {
   word-break: keep-all;
   overflow-wrap: break-word;
 }
-#progress {
-  position: fixed; top: 0; left: 0; height: 3px;
-  background: linear-gradient(90deg, var(--acc), var(--gold));
-  transition: width .4s ease; z-index: 999;
+
+/* subtle parchment vignette */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(ellipse 120% 100% at 50% 0%, transparent 55%, rgba(160,100,30,0.06) 100%);
 }
+
+/* progress bar */
+#progress {
+  position: fixed; top: 0; left: 0; height: 4px;
+  background: linear-gradient(90deg, var(--acc), var(--gold2));
+  transition: width .4s ease; z-index: 999;
+  border-radius: 0 2px 2px 0;
+}
+
+/* section label */
 #section-tag {
-  position: fixed; top: 18px; left: 28px;
-  font-size: var(--t4); color: var(--acc);
-  letter-spacing: .1em; z-index: 998;
+  position: fixed; top: 20px; left: 32px;
+  font-size: 18px; color: var(--ink3);
+  letter-spacing: .12em; z-index: 998;
   font-family: var(--font);
 }
-#page-info {
-  display: none;
-}
+#page-info { display: none; }
 #hint {
-  position: fixed; bottom: 18px; left: 28px;
+  position: fixed; bottom: 18px; right: 28px;
   font-size: 13px; color: var(--ink3); z-index: 998;
+  letter-spacing: .08em;
 }
+
+/* ── 投影片基礎 ── */
 .slide {
-  position: absolute; inset: 0;
+  position: absolute; inset: 0; z-index: 1;
   display: flex; align-items: center; justify-content: center;
-  padding: 36px 56px;
+  padding: 40px 64px;
   opacity: 0; pointer-events: none;
-  transition: opacity .5s ease, transform .5s ease;
-  transform: translateY(14px);
+  transition: opacity .45s ease, transform .45s ease;
+  transform: translateY(18px);
   overflow: hidden;
 }
 .slide.active { opacity: 1; pointer-events: auto; transform: translateY(0); }
-.slide-inner { width: 100%; max-width: 1360px; }
-
-/* ── 封面 ── */
-.cover-bg {
-  position: absolute; inset: 0;
-  background-size: cover; background-position: center;
-  filter: brightness(.35);
-}
-.cover-content {
-  position: relative; text-align: center;
-}
-.cover-kicker {
-  font-size: var(--t2); color: var(--acc); letter-spacing: .2em;
-  margin-bottom: 28px;
-}
-.cover-title {
-  font-size: clamp(110px, 14vw, 180px);
-  font-weight: 900; line-height: 1.15;
-  margin-bottom: 32px;
-}
-.cover-sub {
-  font-size: var(--t2); color: var(--ink2);
-}
+.slide-inner { width: 100%; max-width: 1340px; position: relative; z-index: 1; }
 
 /* ── 章節頁 ── */
-.chapter {
-  text-align: center;
+.slide.chapter-slide {
+  background: linear-gradient(135deg, #3B1E08 0%, #6B3510 50%, #3B1E08 100%);
 }
+.slide.chapter-slide::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(220,130,40,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.chapter { text-align: center; position: relative; }
 .chapter-tag {
-  font-size: var(--t3); color: var(--acc); letter-spacing: .2em;
-  margin-bottom: 24px;
+  display: inline-block;
+  font-size: var(--t4); color: var(--gold2);
+  letter-spacing: .25em; margin-bottom: 28px;
+  border: 1px solid rgba(200,154,32,0.4);
+  padding: 6px 24px; border-radius: 40px;
 }
 .chapter-title {
-  font-size: clamp(120px, 13vw, 175px);
-  font-weight: 900; line-height: 1.2;
+  font-size: clamp(100px, 11vw, 160px);
+  font-weight: 900; line-height: 1.15;
+  color: #FDF7EE;
+  text-shadow: 0 4px 32px rgba(0,0,0,0.3);
 }
+.chapter-title span { color: var(--gold2); }
 .chapter-sub {
-  font-size: var(--t2); color: var(--ink2); margin-top: 28px;
+  font-size: var(--t3); color: rgba(253,247,238,0.65);
+  margin-top: 24px; letter-spacing: .08em;
 }
 
-/* ── 左文右圖 / 左圖右文 ── */
-.split {
-  display: grid;
-  gap: 60px;
-  align-items: center;
-}
-.split-2 { grid-template-columns: 1fr 1fr; }
-.split-3 { grid-template-columns: 1.4fr 1fr; }
-.split-3r { grid-template-columns: 1fr 1.4fr; }
-
+/* ── 頁眉標籤 ── */
 .page-kicker {
-  font-size: var(--t4); color: var(--acc);
-  letter-spacing: .15em; margin-bottom: 12px;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 18px; font-weight: 700;
+  color: var(--acc); letter-spacing: .18em;
+  background: rgba(192,80,10,0.08);
+  border: 1px solid rgba(192,80,10,0.2);
+  padding: 5px 16px; border-radius: 40px;
+  margin-bottom: 16px;
 }
 .page-title {
   font-size: var(--t1); font-weight: 900;
-  line-height: 1.2; margin-bottom: 28px;
+  line-height: 1.18; margin-bottom: 24px;
+  color: var(--ink);
 }
 .page-title .em { color: var(--acc); }
 
+/* ── 分欄 ── */
+.split { display: grid; gap: 56px; align-items: center; }
+.split-2  { grid-template-columns: 1fr 1fr; }
+.split-3  { grid-template-columns: 1.35fr 1fr; }
+.split-3r { grid-template-columns: 1fr 1.35fr; }
+
 /* ── 關鍵詞卡 ── */
-.kw-grid {
-  display: flex; flex-wrap: wrap; gap: 14px;
-}
+.kw-grid { display: flex; flex-wrap: wrap; gap: 12px; }
 .kw {
-  background: var(--bg3);
-  border-left: 3px solid var(--acc);
-  padding: 12px 22px;
+  background: var(--surface);
+  border-left: 4px solid var(--acc);
+  padding: 11px 20px;
   font-size: var(--t3); font-weight: 700;
-  border-radius: 6px;
+  border-radius: 0 var(--r) var(--r) 0;
+  box-shadow: 0 2px 12px var(--shadow);
+  transition: transform .2s;
 }
-.kw.gold { border-color: var(--gold); }
+.kw:hover { transform: translateX(3px); }
+.kw.gold { border-color: var(--gold2); }
 .kw.red  { border-color: var(--red); }
 
 /* ── 數字卡 ── */
-.num-grid {
-  display: grid; gap: 20px;
-}
+.num-grid { display: grid; gap: 16px; }
 .num-grid-2 { grid-template-columns: 1fr 1fr; }
 .num-grid-3 { grid-template-columns: repeat(3, 1fr); }
 .num-card {
-  background: var(--bg3);
-  border-radius: 12px;
-  padding: 28px 24px;
-  display: flex; gap: 18px; align-items: flex-start;
+  background: var(--surface);
+  border-radius: var(--r);
+  padding: 24px 22px;
+  display: flex; gap: 16px; align-items: flex-start;
+  box-shadow: 0 4px 20px var(--shadow);
+  border-top: 3px solid var(--acc);
 }
 .num-card .num {
-  font-size: 64px; font-weight: 900;
-  color: var(--acc); line-height: 1;
-  min-width: 44px;
+  font-size: 60px; font-weight: 900;
+  color: var(--acc); line-height: 1; min-width: 44px;
 }
-.num-card .label {
-  font-size: var(--t3); font-weight: 700;
-  line-height: 1.4;
-}
-.num-card .sub {
-  font-size: var(--t4); color: var(--ink2);
-  margin-top: 6px; line-height: 1.5;
-}
+.num-card .label { font-size: var(--t3); font-weight: 700; line-height: 1.35; }
+.num-card .sub   { font-size: var(--t4); color: var(--ink2); margin-top: 6px; line-height: 1.5; }
+.num-card.gold { border-top-color: var(--gold2); }
 .num-card.gold .num { color: var(--gold); }
 
 /* ── 時間軸 ── */
-.timeline { display: flex; flex-direction: column; gap: 34px; }
+.timeline { display: flex; flex-direction: column; gap: 0; position: relative; }
+.timeline::before {
+  content: ''; position: absolute;
+  left: 5px; top: 10px; bottom: 10px; width: 2px;
+  background: linear-gradient(to bottom, var(--acc), var(--bg3));
+}
 .tl-item {
   display: flex; gap: 20px; align-items: flex-start;
+  padding: 10px 0; position: relative;
 }
 .tl-dot {
   width: 12px; height: 12px; border-radius: 50%;
-  background: var(--acc); margin-top: 8px; flex-shrink: 0;
-  box-shadow: 0 0 8px var(--acc);
+  background: var(--surface);
+  border: 3px solid var(--acc);
+  margin-top: 8px; flex-shrink: 0;
+  position: relative; z-index: 1;
 }
 .tl-date {
-  font-size: var(--t4); color: var(--acc);
-  min-width: 120px; padding-top: 4px; flex-shrink: 0;
+  font-size: var(--t4); color: var(--acc); font-weight: 700;
+  min-width: 126px; padding-top: 4px; flex-shrink: 0;
 }
 .tl-text {
-  font-size: 42px; font-weight: 700; line-height: 1.4;
-  white-space: nowrap;
+  font-size: 38px; font-weight: 700; line-height: 1.4;
 }
 
 /* ── 照片 ── */
-.photo {
-  width: 100%; border-radius: 12px;
-  object-fit: cover;
-}
-.photo-grid {
-  display: grid; gap: 12px;
-}
+.photo { width: 100%; border-radius: var(--r); object-fit: cover; }
+.photo-grid { display: grid; gap: 10px; }
 .photo-grid-2 { grid-template-columns: 1fr 1fr; }
 .photo-grid-3 { grid-template-columns: repeat(3, 1fr); }
 .photo-grid img {
   width: 100%; aspect-ratio: 4/3;
   object-fit: cover; border-radius: 10px;
+  box-shadow: 0 4px 16px var(--shadow);
 }
 .photo-tall { aspect-ratio: 3/4; }
 
 /* ── 統計 ── */
 .stat-row {
-  display: flex; gap: 40px; align-items: center;
-  padding: 28px 0; border-bottom: 1px solid var(--bg3);
+  display: flex; gap: 36px; align-items: center;
+  padding: 22px 0; border-bottom: 1px solid var(--bg3);
 }
-.stat-icon { font-size: 36px; }
-.stat-body .label { font-size: var(--t3); font-weight: 700; }
-.stat-body .detail { font-size: var(--t4); color: var(--ink2); margin-top: 6px; }
+.stat-icon { font-size: 34px; }
+.stat-body .label  { font-size: var(--t3); font-weight: 700; }
+.stat-body .detail { font-size: var(--t4); color: var(--ink2); margin-top: 4px; }
 
 /* ── 結語 ── */
 .epilogue-bg {
   position: absolute; inset: 0;
   background-size: cover; background-position: center;
-  filter: brightness(.28);
+  filter: brightness(.22);
 }
-.epilogue-content {
-  position: relative; text-align: center;
-}
+.epilogue-content { position: relative; text-align: center; }
 .verse-ref {
-  font-size: var(--t4); color: var(--gold); letter-spacing: .15em;
-  margin-bottom: 20px;
+  font-size: var(--t4); color: var(--gold2); letter-spacing: .18em;
+  margin-bottom: 18px;
 }
 .verse-text {
-  font-size: clamp(42px, 5vw, 65px);
-  font-weight: 700; line-height: 1.7;
-  color: var(--ink);
+  font-size: clamp(38px, 4.5vw, 60px);
+  font-weight: 700; line-height: 1.75;
+  color: #FDF7EE;
 }
-.verse-text .em { color: var(--gold); }
-.verse-sep { margin: 40px auto; width: 60px; height: 2px; background: var(--gold); }
-</style></head><body><div id='progress'></div><div id='section-tag'></div><div id='page-info'></div><div id='hint'>← → 換頁　F 全螢幕</div>
-<section class="slide active" data-section="林內鄉召會">
+.verse-text .em { color: var(--gold2); }
+.verse-sep { margin: 32px auto; width: 48px; height: 2px; background: var(--gold2); opacity: .7; }
+</style></head><body><div id='progress'></div><div id='section-tag'></div><div id='page-info'></div><div id='hint'>← →　換頁　　F　全螢幕</div>
+<section class="slide active chapter-slide" data-section="林內鄉召會">
   <div class="slide-inner chapter">
     <div class="chapter-tag">── 第一部分 ──</div>
     <div class="chapter-title">林內鄉召會<br><span style="color:var(--acc)">得少專案蒙恩</span></div>
@@ -238,11 +249,11 @@ html, body {
       <div class="page-kicker">林內鄉 · 現況</div>
       <div class="page-title" style="font-size:var(--t2)"><span class="em">得少</span>現況</div>
       <div style="display:flex;gap:16px;flex-wrap:wrap">
-        <div style="background:linear-gradient(135deg,#FDE8CE,#F5C89A);border-radius:12px;padding:20px 32px;text-align:center;flex:1">
+        <div style="background:#fff;box-shadow:0 4px 20px rgba(100,50,10,0.10);border-top:3px solid #C0500A;border-radius:12px;padding:20px 32px;text-align:center;flex:1">
           <div style="font-size:80px;font-weight:900;color:var(--acc)">6</div>
           <div style="font-size:var(--t4);color:var(--ink2);margin-top:4px">個家</div>
         </div>
-        <div style="background:linear-gradient(135deg,#FCEADE,#F0D5B8);border-radius:12px;padding:20px 32px;text-align:center;flex:1">
+        <div style="background:#fff;box-shadow:0 4px 20px rgba(100,50,10,0.10);border-top:3px solid #9A7010;border-radius:12px;padding:20px 32px;text-align:center;flex:1">
           <div style="font-size:80px;font-weight:900;color:var(--gold)">8</div>
           <div style="font-size:var(--t4);color:var(--ink2);margin-top:4px">個得少</div>
         </div>
