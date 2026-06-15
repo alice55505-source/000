@@ -22,6 +22,10 @@ html, body { width: 1366px !important; height: auto !important; overflow: visibl
   break-after: page;
   overflow: hidden !important;
 }
+.slide:last-child {
+  page-break-after: avoid !important;
+  break-after: avoid !important;
+}
 #progress, #section-tag, #hint { display: none !important; }
 </style>`;
 
