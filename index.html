@@ -71,7 +71,7 @@
   #stage{flex:1; position:relative; overflow:hidden;}
   .screen{
     position:absolute; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center;
-    padding:20px; text-align:center; gap:14px;
+    padding:20px; text-align:center; gap:14px; overflow-y:auto;
   }
   .screen.active{display:flex;}
   .screen h1{font-size:34px; margin:0 0 4px; color:var(--gold-bright); text-shadow:0 2px 6px rgba(0,0,0,.6);}
@@ -86,6 +86,9 @@
   .shoe-arc.rusty{stroke:#8a5a34;}
   .shoe-arc.hot{stroke:url(#hotGrad); filter:drop-shadow(0 0 26px #ff5a1f);}
   .shoe-arc.gone{opacity:0; transition:opacity .5s;}
+  .nail-hole-deco{fill:#241408; opacity:.55;}
+  .hoof-rough{fill:#c99a63; stroke:#8a6a3f; stroke-width:2; stroke-linejoin:round; transition:opacity .4s;}
+  .hoof-rough.trimmed{opacity:0;}
   .fly-off{animation:flyoff .7s forwards;}
   @keyframes flyoff{ to{ transform:translateY(-260px) rotate(35deg); opacity:0;} }
 
@@ -108,10 +111,8 @@
 
   /* trim zones / bump / marks / nails */
   .hot-zone{
-    position:absolute; border:3px dashed var(--danger); border-radius:40px; background:rgba(229,72,77,.18);
-    cursor:pointer;
+    position:absolute; cursor:pointer;
   }
-  .hot-zone.done{border-color:var(--success); background:rgba(62,207,110,.15); border-style:solid;}
   .bump{
     position:absolute; border-radius:50%; background:radial-gradient(circle at 35% 30%, #ffd98a, #a5763a 70%);
     box-shadow:inset 0 0 8px rgba(0,0,0,.5); cursor:pointer; transition:transform .15s, opacity .15s;
@@ -190,6 +191,23 @@
     #timer{font-size:32px;} .score-box{min-width:74px; padding:4px 8px;} .score-box .team-time{font-size:15px;}
     .big-btn{font-size:17px; padding:12px 16px;} .screen h1{font-size:24px;} .screen h2{font-size:20px;}
   }
+  @media (max-height:700px){
+    #topbar{height:64px; min-height:64px;}
+    #timer{font-size:30px;} #timer-label{font-size:11px;}
+    .score-box{padding:3px 10px; min-width:80px;} .score-box .team-name{font-size:12px;} .score-box .team-time{font-size:15px;}
+    .big-btn{font-size:16px; padding:10px 18px;}
+    .icon-btn{width:38px; height:38px; font-size:16px;}
+    .screen{padding:10px; gap:8px;}
+    .screen h1{font-size:24px; margin:0;} .screen h2{font-size:18px; margin:0;}
+    .screen p.subtitle{font-size:15px;}
+    .instructions{font-size:15px; padding:6px 16px;}
+    .shoe-area{width:min(34vh,70vw);}
+    .final-anim{font-size:48px; margin:4px 0;}
+    .tool-btn{width:96px; height:96px; font-size:32px;}
+    .tool-btn span.tool-label{font-size:12px;}
+    .size-chip{width:70px; height:56px; font-size:20px;}
+    #nail-tray{bottom:4px;}
+  }
 </style>
 </head>
 <body>
@@ -233,7 +251,7 @@
 
     <div class="screen" id="screen-2">
       <h2>第二關・修剪馬蹄 ✂️</h2>
-      <p class="instructions">用手指／白板筆在紅色過長區域來回劃過，修剪整齊！</p>
+      <p class="instructions">用手指／白板筆在凹凸不平的過長蹄緣來回劃過，修剪整齊！</p>
       <div class="shoe-area" id="shoe2"></div>
     </div>
 
@@ -347,25 +365,38 @@
   var CX = 200, CY = 230, R = 150;
   var VB_W = 400, VB_H = 360;
 
-  function arcPoint(deg){
+  function arcPoint(deg, radius){
+    var r = (radius===undefined) ? R : radius;
     var rad = deg * Math.PI / 180;
-    return { x: CX + R * Math.cos(rad), y: CY + R * Math.sin(rad) };
+    return { x: CX + r * Math.cos(rad), y: CY + r * Math.sin(rad) };
   }
   function pct(v, total){ return (v/total*100).toFixed(2) + "%"; }
 
+  // A real horseshoe is a nearly-closed ring (toe curving over the top,
+  // a narrow gap between the two heels at the bottom) — not a thin,
+  // wide-open half-circle. All the level angles below are authored on an
+  // easy 200->340 (140°) scale and then remapped onto a much wider
+  // 135->405 (270°) band so the branches run tall and mostly parallel,
+  // matching an actual shoe, while keeping every level's relative layout.
+  var OLD_DOMAIN_START = 200, OLD_DOMAIN_SPAN = 140;
+  var NEW_DOMAIN_START = 135, NEW_DOMAIN_SPAN = 270;
+  function remapAngle(a){
+    return NEW_DOMAIN_START + (a - OLD_DOMAIN_START) / OLD_DOMAIN_SPAN * NEW_DOMAIN_SPAN;
+  }
+
   var VARIANTS = {
     A: {
-      trimZones: [ {from:225, to:315} ],
-      bumps: [ {angle:250, r:26}, {angle:295, r:26} ]
+      trimZones: [ {from:remapAngle(225), to:remapAngle(315)} ],
+      bumps: [ {angle:remapAngle(250), r:26}, {angle:remapAngle(295), r:26} ]
     },
     B: {
-      trimZones: [ {from:207, to:243}, {from:297, to:333} ],
-      bumps: [ {angle:215, r:16}, {angle:245, r:16}, {angle:295, r:16}, {angle:325, r:16} ]
+      trimZones: [ {from:remapAngle(207), to:remapAngle(243)}, {from:remapAngle(297), to:remapAngle(333)} ],
+      bumps: [ {angle:remapAngle(215), r:16}, {angle:remapAngle(245), r:16}, {angle:remapAngle(295), r:16}, {angle:remapAngle(325), r:16} ]
     }
   };
-  var MARK_ANGLES = [235, 270, 305];
+  var MARK_ANGLES = [235, 270, 305].map(remapAngle);
   var NAIL_ANGLES = (function(){
-    var arr = []; var from = 210, to = 330, n = 8;
+    var arr = []; var from = remapAngle(210), to = remapAngle(330), n = 8;
     for (var i=0;i<n;i++){ arr.push(from + (to-from)*i/(n-1)); }
     return arr;
   })();
@@ -540,11 +571,20 @@
     var svg = document.createElementNS(NS,"svg");
     svg.setAttribute("viewBox","0 0 "+VB_W+" "+VB_H);
     svg.setAttribute("class","horseshoe-svg");
-    var start = arcPoint(200), end = arcPoint(340);
+    var start = arcPoint(remapAngle(200)), end = arcPoint(remapAngle(340));
     var path = document.createElementNS(NS,"path");
-    path.setAttribute("d","M "+start.x+" "+start.y+" A "+R+" "+R+" 0 0 1 "+end.x+" "+end.y);
+    path.setAttribute("d","M "+start.x+" "+start.y+" A "+R+" "+R+" 0 1 1 "+end.x+" "+end.y);
     path.setAttribute("class","shoe-arc");
     svg.appendChild(path);
+    // decorative nail holes along the band, like a real horseshoe
+    NAIL_ANGLES.forEach(function(angle){
+      var p = arcPoint(angle, R);
+      var hole = document.createElementNS(NS,"circle");
+      hole.setAttribute("cx", p.x); hole.setAttribute("cy", p.y);
+      hole.setAttribute("r", 5);
+      hole.setAttribute("class","nail-hole-deco");
+      svg.appendChild(hole);
+    });
     container.appendChild(svg);
     return { svg: svg, path: path };
   }
@@ -593,6 +633,25 @@
 
   // ---- Level 2 ----
   var level2State = { zones: [], done: 0 };
+  var ROUGH_MAX_JAG = 34;
+  function roughHoofPath(from, to){
+    var steps = 10;
+    var outerPts = [];
+    for (var i=0;i<=steps;i++){
+      var t = i/steps;
+      var angle = from + (to-from)*t;
+      var jag = (i % 2 === 0) ? 6 : ROUGH_MAX_JAG;
+      var wobble = Math.sin(i*2.4) * 6;
+      outerPts.push(arcPoint(angle, R + jag + wobble));
+    }
+    var innerPts = [];
+    for (var i=steps;i>=0;i--){
+      var t = i/steps;
+      innerPts.push(arcPoint(from + (to-from)*t, R));
+    }
+    var all = outerPts.concat(innerPts);
+    return "M " + all.map(function(p){ return p.x+" "+p.y; }).join(" L ") + " Z";
+  }
   function buildLevel2(){
     var container = document.getElementById("shoe2");
     var r = svgFor(container);
@@ -600,17 +659,26 @@
     level2State.done = 0;
     var variant = VARIANTS[state.team];
     variant.trimZones.forEach(function(z){
+      // overgrown, ragged hoof wall sticking out past the shoe's edge —
+      // this is what actually looks "wrong" and needs trimming
+      var roughEl = document.createElementNS(NS,"path");
+      roughEl.setAttribute("d", roughHoofPath(z.from, z.to));
+      roughEl.setAttribute("class","hoof-rough");
+      r.svg.appendChild(roughEl);
+
       var pts = [];
       var steps = 8;
       for (var i=0;i<=steps;i++){
-        pts.push(arcPoint(z.from + (z.to-z.from)*i/steps));
+        var angle = z.from + (z.to-z.from)*i/steps;
+        pts.push(arcPoint(angle));
+        pts.push(arcPoint(angle, R+ROUGH_MAX_JAG));
       }
       var minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
       pts.forEach(function(p){
         minX=Math.min(minX,p.x); maxX=Math.max(maxX,p.x);
         minY=Math.min(minY,p.y); maxY=Math.max(maxY,p.y);
       });
-      var pad = 34;
+      var pad = 16;
       minX-=pad; maxX+=pad; minY-=pad; maxY+=pad;
       var div = document.createElement("div");
       div.className = "hot-zone";
@@ -628,6 +696,7 @@
         lastX=x; lastY=y;
         if (progress > threshold && !div.classList.contains("done")){
           div.classList.add("done");
+          roughEl.classList.add("trimmed");
           sndCut();
           level2State.done++;
           if (level2State.done >= variant.trimZones.length){
