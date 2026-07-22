@@ -820,11 +820,7 @@
       iconWrap.style.width = dims.w+"px";
       iconWrap.style.height = dims.h+"px";
       iconWrap.appendChild(buildShoeSvg("chip-arc").svg);
-      var label = document.createElement("div");
-      label.className = "chip-label";
-      label.textContent = sz;
       chip.appendChild(iconWrap);
-      chip.appendChild(label);
       var startX,startY,origLeft,origTop,dragging=false;
       chip.addEventListener("pointerdown", function(ev){
         dragging = true;
@@ -853,11 +849,6 @@
           if (sz === CORRECT_SIZE){
             sndSuccess();
             els.dropTarget.classList.add("filled");
-            els.dropTarget.textContent = "";
-            var lbl = document.createElement("div");
-            lbl.textContent = sz;
-            lbl.style.fontSize="22px"; lbl.style.fontWeight="900"; lbl.style.color="#fff";
-            els.dropTarget.appendChild(lbl);
             sizeTrayEl.querySelectorAll(".size-chip").forEach(function(c){ c.style.pointerEvents="none"; c.style.opacity = c===chip?"1":"0.35"; });
             setTimeout(nextLevel, 550);
           } else {
